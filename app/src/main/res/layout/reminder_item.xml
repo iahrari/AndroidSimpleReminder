@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="reminder" type="com.github.iahrari.reminder.model.Reminder" />
-        <import type="android.icu.util.Calendar"/>
+            name="reminder" type="com.github.iahrari.reminder.service.model.Reminder" />
+        <import type="java.util.Calendar"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/time"
-            android:text="@{reminder.cal.get(Calendar.HOUR) + ':' + reminder.cal.get(Calendar.MINUTE)}"
+            android:text="@{reminder.getCalendar().get(Calendar.HOUR) + ':' + reminder.getCalendar().get(Calendar.MINUTE)}"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="16dp"
             android:textColor="@color/colorText"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/am_pm"
             android:layout_marginHorizontal="4dp"
-            android:text="@{(reminder.cal.get(Calendar.AM_PM == Calendar.AM)? @string/am : @string/pm)}"
+            android:text="@{(reminder.getCalendar().get(Calendar.AM_PM) == Calendar.AM)? @string/am : @string/pm}"
             tools:text="AM"
             app:layout_constraintStart_toEndOf="@id/time"
             app:layout_constraintBottom_toBottomOf="@id/time"/>
