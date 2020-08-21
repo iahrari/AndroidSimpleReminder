@@ -1,7 +1,9 @@
 package com.github.iahrari.reminder.ui.view
 
 import androidx.fragment.app.Fragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class EditFragment:Fragment() {
+@AndroidEntryPoint
+class EditFragment: Fragment() {
 
 }
