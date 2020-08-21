@@ -40,6 +40,7 @@
             android:layout_margin="16dp"
             android:text="@string/add"
             android:textColor="@color/colorPrimaryDark"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
             app:backgroundTint="@color/colorPrimary"
             app:icon="@drawable/ic_reminder"
             app:iconTint="@color/colorPrimaryDark"

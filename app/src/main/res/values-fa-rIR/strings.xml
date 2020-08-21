@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">یادآور</string>
     <string name="add">افزودن</string>
+    <string name="am">ق.ظ</string>
+    <string name="pm">ب.ظ</string>
 </resources>
