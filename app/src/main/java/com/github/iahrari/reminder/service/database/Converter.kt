@@ -6,7 +6,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.text.StringBuilder
 
-class DateConverter {
+class Converter {
     @TypeConverter
     fun fromTimeStamp(value: Long?): Date? {
         return value?.let { Date(it) }

@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.github.iahrari.reminder.service.model.Reminder
 
 @DatabaseA(entities = [Reminder::class], version = 1, exportSchema = false)
-@TypeConverters(DateConverter::class)
+@TypeConverters(Converter::class)
 abstract class Database: RoomDatabase() {
 
     abstract fun getDAO(): ReminderDAO
