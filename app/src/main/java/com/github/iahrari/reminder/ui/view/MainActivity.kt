@@ -1,8 +1,9 @@
-package com.github.iahrari.reminder
+package com.github.iahrari.reminder.ui.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
