@@ -15,7 +15,7 @@
         tools:background="@color/colorPrimaryBackground"
         android:layout_margin="8dp">
         <TextView
-            android:layoutDirection="ltr"
+            android:textDirection="ltr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/time"
