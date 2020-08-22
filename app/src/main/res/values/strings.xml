@@ -3,4 +3,5 @@
     <string name="add">Add</string>
     <string name="am">AM</string>
     <string name="pm">PM</string>
+    <string name="delete">Delete</string>
 </resources>

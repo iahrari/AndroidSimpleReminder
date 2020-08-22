@@ -4,4 +4,5 @@
     <string name="add">افزودن</string>
     <string name="am">ق.ظ</string>
     <string name="pm">ب.ظ</string>
+    <string name="delete">حذف</string>
 </resources>

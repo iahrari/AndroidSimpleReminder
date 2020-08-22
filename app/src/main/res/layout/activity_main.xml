@@ -18,21 +18,23 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:background="@color/colorPrimaryBackground"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimaryBackground"
                 android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
                 app:title="@string/app_name"
                 app:titleTextColor="@color/colorPrimary" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_below="@id/app_bar"
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/content"
-            layout="@layout/content_main" />
+            android:layout_below="@id/app_bar"
+            app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:navGraph="@navigation/nav_main" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:layout_width="wrap_content"
@@ -40,11 +42,12 @@
             android:layout_margin="16dp"
             android:text="@string/add"
             android:textColor="@color/colorPrimaryDark"
-            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+            android:id="@+id/floating_action"
             app:backgroundTint="@color/colorPrimary"
             app:icon="@drawable/ic_reminder"
             app:iconTint="@color/colorPrimaryDark"
             app:layout_anchor="@id/content"
-            app:layout_anchorGravity="bottom|end" />
+            app:layout_anchorGravity="bottom|end"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

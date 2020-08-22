@@ -5,4 +5,5 @@
     <color name="colorAccent">@color/colorPrimary</color>
     <color name="colorPrimaryBackground">@color/colorPrimaryDark</color>
     <color name="colorText">#000</color>
+    <color name="colorSelected">#bdbdbd</color>
 </resources>

@@ -22,6 +22,12 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+    fun deleteReminders(vararg reminders: Reminder){
+        viewModelScope.launch(Dispatchers.Default){
+            database.getDAO().deleteReminders(*reminders)
+        }
+    }
+
     fun insertOrUpdate(reminder: Reminder){
         viewModelScope.launch(Dispatchers.Default){
             database.getDAO().insert(reminder)

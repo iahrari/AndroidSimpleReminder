@@ -15,4 +15,19 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(binding.toolbar)
     }
+
+    fun setFloatingButtonAction(operation: () -> Unit){
+        binding.floatingAction.setOnClickListener {
+            operation()
+        }
+    }
+
+    fun setToolbarTitle(title: Int){
+        TODO("Implement this method")
+    }
+
+    fun setFloatingButtonUi(title: Int, icon: Int){
+        binding.floatingAction.setText(title)
+        binding.floatingAction.setIconResource(icon)
+    }
 }

@@ -7,10 +7,13 @@
             name="reminder" type="com.github.iahrari.reminder.service.model.Reminder" />
         <import type="java.util.Calendar"/>
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="@color/colorPrimaryBackground">
+        android:background="?attr/selectableItemBackground"
+        tools:background="@color/colorPrimaryBackground"
+        android:layout_margin="8dp">
         <TextView
             android:layoutDirection="ltr"
             android:layout_width="wrap_content"
@@ -63,5 +66,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/hover"
+            android:alpha="0.5"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:cardCornerRadius="25dp"
+            app:cardBackgroundColor="@color/colorSelected"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

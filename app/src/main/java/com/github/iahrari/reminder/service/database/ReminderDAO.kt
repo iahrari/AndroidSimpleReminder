@@ -17,4 +17,7 @@ interface ReminderDAO {
 
     @Delete
     suspend fun deleteReminder(reminder: Reminder)
+
+    @Delete
+    suspend fun deleteReminders(vararg reminders: Reminder)
 }
