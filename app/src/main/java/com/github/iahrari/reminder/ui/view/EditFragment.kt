@@ -3,9 +3,7 @@ package com.github.iahrari.reminder.ui.view
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -30,6 +28,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         (activity as MainActivity).apply {
             listener = this@EditFragment
             setToolbarTitle(null)
@@ -55,13 +54,28 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getReminder(reminderId).observe(viewLifecycleOwner) {
-            if (it != null){
+            if (it != null) {
                 reminder = it
                 binding.reminder = reminder
                 Log.i("Reminder", reminder.toString())
                 setUI()
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.edit_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.delete)
+            setAlertDialog(
+                R.string.delete_question,{
+                    viewModel.deleteReminder(reminder!!)
+                }, {})
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setUI() {
@@ -143,13 +157,34 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
     private fun setWeekDayPicker() {
         binding.weekPicker.apply {
             reminder!!.apply {
-                setWeekDayBackgroundColor(weeksDay[Calendar.SATURDAY -1] == Reminder.WEEK_DAY_ENABLE, weekSaturday)
-                setWeekDayBackgroundColor(weeksDay[Calendar.SUNDAY -1] == Reminder.WEEK_DAY_ENABLE, weekSunday)
-                setWeekDayBackgroundColor(weeksDay[Calendar.MONDAY -1] == Reminder.WEEK_DAY_ENABLE, weekMonday)
-                setWeekDayBackgroundColor(weeksDay[Calendar.TUESDAY -1] == Reminder.WEEK_DAY_ENABLE, weekTuesday)
-                setWeekDayBackgroundColor(weeksDay[Calendar.WEDNESDAY] == Reminder.WEEK_DAY_ENABLE, weekWednesday)
-                setWeekDayBackgroundColor(weeksDay[Calendar.THURSDAY -1] == Reminder.WEEK_DAY_ENABLE, weekThursday)
-                setWeekDayBackgroundColor(weeksDay[Calendar.FRIDAY -1] == Reminder.WEEK_DAY_ENABLE, weekFriday)
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.SATURDAY - 1] == Reminder.WEEK_DAY_ENABLE,
+                    weekSaturday
+                )
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.SUNDAY - 1] == Reminder.WEEK_DAY_ENABLE,
+                    weekSunday
+                )
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.MONDAY - 1] == Reminder.WEEK_DAY_ENABLE,
+                    weekMonday
+                )
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.TUESDAY - 1] == Reminder.WEEK_DAY_ENABLE,
+                    weekTuesday
+                )
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.WEDNESDAY] == Reminder.WEEK_DAY_ENABLE,
+                    weekWednesday
+                )
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.THURSDAY - 1] == Reminder.WEEK_DAY_ENABLE,
+                    weekThursday
+                )
+                setWeekDayBackgroundColor(
+                    weeksDay[Calendar.FRIDAY - 1] == Reminder.WEEK_DAY_ENABLE,
+                    weekFriday
+                )
 
                 setWeekDayClickListener(Calendar.SATURDAY - 1, weekSaturday)
                 setWeekDayClickListener(Calendar.SUNDAY - 1, weekSunday)
@@ -186,24 +221,34 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
 
     override fun onBackPressed() {
         if (viewModel.isReminderUpdated(reminder))
-            AlertDialog.Builder(requireContext())
-                .setCancelable(false)
-                .setTitle(R.string.save_reminder)
-                .setPositiveButton(R.string.yes){dialog, _ ->
-                    viewModel.insertOrUpdate(reminder!!, false)
-                    dialog.dismiss()
-                    navigateBack()
-                }.setNegativeButton(R.string.no){dialog, _ ->
-                    dialog.dismiss()
-                    navigateBack()
-                }.create().show()
+            setAlertDialog(R.string.save_reminder, {
+                viewModel.insertOrUpdate(reminder!!, false)
+            }, { navigateBack() })
         else navigateBack()
     }
 
-    private fun navigateBack(){
+    private fun navigateBack() {
         (activity as MainActivity).apply {
             listener = null
             onBackPressed()
         }
+    }
+
+    private fun setAlertDialog(
+        title: Int,
+        positiveOperation: () -> Unit,
+        negativeOperation: () -> Unit
+    ) {
+        AlertDialog.Builder(requireContext())
+            .setCancelable(false)
+            .setTitle(title)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                positiveOperation()
+                dialog.dismiss()
+                navigateBack()
+            }.setNegativeButton(R.string.no) { dialog, _ ->
+                dialog.dismiss()
+                negativeOperation()
+            }.create().show()
     }
 }
