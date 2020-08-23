@@ -24,4 +24,5 @@
     <string name="save_reminder">آیا مایلید یادآور ذخیره شود؟</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>
+    <string name="settings">تنظیمات</string>
 </resources>

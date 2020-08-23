@@ -1,9 +1,7 @@
 package com.github.iahrari.reminder.ui.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,6 +27,7 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
     ): View? {
         binding = DataBindingUtil
             .inflate(inflater, R.layout.fragment_main, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -50,6 +49,17 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
             setToolbarTitle(R.string.app_name)
             setFloatingActionButton(null)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.settings)
+            callSettings()
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onItemClick(reminder: Reminder) {
@@ -86,7 +96,9 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
                 }
             }
         }
+    }
 
-
+    private fun callSettings(){
+        //TODO: Implement this method
     }
 }

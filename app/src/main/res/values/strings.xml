@@ -23,4 +23,5 @@
     <string name="save_reminder">Do you want to save reminder?</string>
     <string name="yes">Yes</string>
     <string name="no">no</string>
+    <string name="settings">Settings</string>
 </resources>
