@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="com.github.iahrari.reminder.service.model.ReminderType"/>
+        <variable
+            name="type"
+            type="com.github.iahrari.reminder.service.model.ReminderType" />
+    </data>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:id="@+id/month_picker"
+        app:layout_constraintTop_toBottomOf="@id/remind_types">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/start_of_month"
+            android:checked="@{type == ReminderType.START_OF_MONTH}"
+            android:text="@string/start_of_month"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/end_of_month"
+            android:checked="@{type == ReminderType.END_OF_MONTH}"
+            android:text="@string/end_of_month"/>
+    </RadioGroup>
+</layout>

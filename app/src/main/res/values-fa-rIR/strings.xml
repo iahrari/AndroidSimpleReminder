@@ -5,4 +5,23 @@
     <string name="am">ق.ظ</string>
     <string name="pm">ب.ظ</string>
     <string name="delete">حذف</string>
+    <string name="title">عنوان</string>
+    <string name="remind_me">يادآوری کن:</string>
+    <string name="daily">روزانه</string>
+    <string name="monthly">ماهانه</string>
+    <string name="on_exact_time">زمان مشخص</string>
+    <string name="sat">ش</string>
+    <string name="su">ی</string>
+    <string name="m">د</string>
+    <string name="tu">س</string>
+    <string name="w">چ</string>
+    <string name="th">پ</string>
+    <string name="f">ج</string>
+    <string name="each_month">هر ماه</string>
+    <string name="start_of_month">ابتدای ماه</string>
+    <string name="end_of_month">پایان ماه</string>
+    <string name="save">ذخیره</string>
+    <string name="save_reminder">آیا مایلید یادآور ذخیره شود؟</string>
+    <string name="yes">بله</string>
+    <string name="no">خیر</string>
 </resources>
