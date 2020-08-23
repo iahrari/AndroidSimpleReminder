@@ -28,7 +28,7 @@ class Converter {
     }
 
     @TypeConverter
-    fun listToString(value: List<Int>): String {
+    fun listToString(value: IntArray): String {
         val s = StringBuilder("")
         if(value.isNotEmpty()){
             for(i in value){
@@ -40,7 +40,7 @@ class Converter {
     }
 
     @TypeConverter
-    fun stringToList(value: String?): MutableList<Int> {
+    fun stringToList(value: String?): IntArray {
         val list = ArrayList<Int>()
         if (value != null && value.contains(',')){
             val s = value.split(',')
@@ -50,6 +50,6 @@ class Converter {
             }
         }
 
-        return list
+        return list.toIntArray()
     }
 }
