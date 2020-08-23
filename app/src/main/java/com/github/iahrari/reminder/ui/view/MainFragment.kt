@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.FragmentMainBinding
 import com.github.iahrari.reminder.service.model.Reminder
@@ -15,10 +16,11 @@ import com.github.iahrari.reminder.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment: Fragment(), ListAdapter.OnItemClick {
+class MainFragment : Fragment(), ListAdapter.OnItemClick {
     private lateinit var binding: FragmentMainBinding
     private lateinit var adapter: ListAdapter
     private val viewModel: MainViewModel by viewModels()
+    private var isInSelectedMode = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,40 +38,55 @@ class MainFragment: Fragment(), ListAdapter.OnItemClick {
         adapter = ListAdapter(this)
         binding.reminderRecycler.adapter = adapter
 
-        viewModel.getReminders().observe(viewLifecycleOwner){
+        viewModel.getReminders().observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
+    }
 
-        (activity as MainActivity).apply{
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).apply {
+            listener = null
             setToolbarTitle(R.string.app_name)
-            setFloatingButtonAction {
-                MainFragmentDirections.actionMainFragmentToEditFragment(-1)
-            }
+            setFloatingActionButton(null)
         }
     }
 
     override fun onItemClick(reminder: Reminder) {
-        MainFragmentDirections.actionMainFragmentToEditFragment(reminder.id)
+        navigateTo(reminder.id)
     }
 
     override fun onSwitchChanged(reminder: Reminder) {
-        viewModel.insertOrUpdate(reminder)
+        viewModel.insertOrUpdate(reminder, true)
     }
 
     override fun onItemsSelected(items: MutableList<Reminder>) {
-        if (items.size > 0)
-            (activity as MainActivity).apply {
+        isInSelectedMode = items.size > 0
+        setFloatingActionButton(items)
+    }
+
+    private fun navigateTo(id: Int) {
+        findNavController().navigate(
+            MainFragmentDirections.actionMainFragmentToEditFragment(id)
+        )
+    }
+
+    private fun setFloatingActionButton(items: MutableList<Reminder>?) {
+        (activity as MainActivity).apply {
+            if (isInSelectedMode) {
                 setFloatingButtonUi(R.string.delete, R.drawable.ic_delete)
                 setFloatingButtonAction {
-                    viewModel.deleteReminders(*items.toTypedArray())
+                    viewModel.deleteReminders(*items!!.toTypedArray())
                     items.clear()
                 }
-            }
-        else (activity as MainActivity).apply {
-            setFloatingButtonUi(R.string.add, R.drawable.ic_reminder)
-            setFloatingButtonAction {
-                MainFragmentDirections.actionMainFragmentToEditFragment(-1)
+            } else {
+                setFloatingButtonUi(R.string.add, R.drawable.ic_reminder)
+                setFloatingButtonAction {
+                    navigateTo(-1)
+                }
             }
         }
+
+
     }
 }

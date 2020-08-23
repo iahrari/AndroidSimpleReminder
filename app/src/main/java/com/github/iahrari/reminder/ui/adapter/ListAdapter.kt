@@ -32,19 +32,25 @@ class ListAdapter(private val listener: OnItemClick):
             binding.reminder = data
 
             binding.root.setOnClickListener {
-                if (!data.isSelected) listener.onItemClick(data)
+                if (selectedList.isEmpty()) listener.onItemClick(data)
                 else {
-                    itemSelected(data, false)
-                    selectedList.remove(data)
+                    binding.root.performLongClick()
                 }
             }
 
             binding.root.setOnLongClickListener {
                 if (!data.isSelected) {
-                    itemSelected(data, true)
                     selectedList.add(data)
+                    itemSelected(data, true)
                     true
                 } else false
+            }
+
+            binding.hover.setOnClickListener {
+                if(data.isSelected){
+                    selectedList.remove(data)
+                    itemSelected(data, false)
+                }
             }
 
             binding.isEnabled.setOnCheckedChangeListener { _, b ->
@@ -80,11 +86,7 @@ class ListAdapter(private val listener: OnItemClick):
 
 
         override fun areContentsTheSame(oldItem: Reminder, newItem: Reminder): Boolean  =
-            newItem.isEnabled == oldItem.isEnabled &&
-                    newItem.time == oldItem.time &&
-                    newItem.title == oldItem.title &&
-                    newItem.type == oldItem.type &&
-                    newItem.weeksDay.equals(oldItem)
+            oldItem == newItem
 
     }
 
