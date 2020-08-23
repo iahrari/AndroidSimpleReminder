@@ -13,7 +13,7 @@ interface ReminderDAO {
     fun getAllReminders(): LiveData<List<Reminder>>
 
     @Query("select * from reminders where id=:id")
-    fun getReminderById(id: Int): LiveData<Reminder>
+    fun getReminderById(id: Int): Reminder?
 
     @Delete
     suspend fun deleteReminder(reminder: Reminder)

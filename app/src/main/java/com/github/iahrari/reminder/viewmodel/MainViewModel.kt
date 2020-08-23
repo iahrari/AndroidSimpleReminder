@@ -20,13 +20,11 @@ class MainViewModel @ViewModelInject constructor(
     fun getReminder(id: Int): LiveData<Reminder> {
         val liveData = MutableLiveData<Reminder>()
         if (id >= 0) {
-            database.getDAO().getReminderById(id).apply {
-                observeForever {
-                    reminderOriginal = it
-                    liveData.postValue(reminderOriginal!!.copy().apply {
-                        this.id = reminderOriginal!!.id
-                    })
-                }
+            viewModelScope.launch(Dispatchers.Default) {
+                reminderOriginal = database.getDAO().getReminderById(id)
+                liveData.postValue(reminderOriginal!!.copy().apply {
+                    this.id = reminderOriginal!!.id
+                })
             }
         }
         else {
