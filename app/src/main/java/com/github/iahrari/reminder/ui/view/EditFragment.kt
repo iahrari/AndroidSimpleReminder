@@ -57,6 +57,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
             if (it != null) {
                 reminder = it
                 binding.reminder = reminder
+                binding.monthPickerContainer.type = reminder!!.type
                 Log.i("Reminder", reminder.toString())
                 setUI()
             }
@@ -113,6 +114,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
 
                     R.id.remind_monthly -> {
                         reminder!!.type = ReminderType.START_OF_MONTH
+                        binding.monthPickerContainer.type = reminder!!.type
                         binding.monthPickerContainer.monthPicker.setOnCheckedChangeListener { _, itemId ->
                             if (itemId == R.id.start_of_month)
                                 reminder!!.type = ReminderType.START_OF_MONTH
