@@ -88,7 +88,9 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
 
     private fun setDatePicker() {
         binding.datePickerContainer.datePicker.apply {
-            minDate = reminder!!.time.time
+            minDate = Calendar.getInstance().apply {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }.time.time
 
             init(
                 reminder!!.getCalendar().get(Calendar.YEAR),
