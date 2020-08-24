@@ -8,4 +8,9 @@
         <item name="android:navigationBarColor">@color/colorPrimaryBackground</item>
     </style>
 
+    <style name="Toolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/colorPrimary</item>
+    </style>
+
 </resources>

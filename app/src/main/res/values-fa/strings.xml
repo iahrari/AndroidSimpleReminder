@@ -26,4 +26,10 @@
     <string name="no">خیر</string>
     <string name="settings">تنظیمات</string>
     <string name="delete_question">آیا از حذف این یادآور مطمئن هستید؟</string>
+    <string name="device_default">پیشفرض دستگاه</string>
+    <string name="dark">تیره</string>
+    <string name="light">روشن</string>
+    <string name="theme">تم</string>
+    <string name="language">زبان</string>
+    <string name="done">تمام</string>
 </resources>
