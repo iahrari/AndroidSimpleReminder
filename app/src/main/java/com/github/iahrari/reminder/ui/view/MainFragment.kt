@@ -100,6 +100,8 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
                 setFloatingButtonAction {
                     viewModel.deleteReminders(*items!!.toTypedArray())
                     items.clear()
+                    isInSelectedMode = false
+                    setFloatingActionButton(null)
                 }
             } else {
                 setFloatingButtonUi(R.string.add, R.drawable.ic_reminder)
