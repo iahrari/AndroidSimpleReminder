@@ -11,4 +11,39 @@
         <item>@string/dark</item>
         <item>@string/light</item>
     </string-array>
+
+    <string-array name="months">
+        <item>@string/january</item>
+        <item>@string/february</item>
+        <item>@string/march</item>
+        <item>@string/april</item>
+        <item>@string/may</item>
+        <item>@string/june</item>
+        <item>@string/july</item>
+        <item>@string/august</item>
+        <item>@string/september</item>
+        <item>@string/october</item>
+        <item>@string/november</item>
+        <item>@string/december</item>
+    </string-array>
+
+    <string-array name="weekDays">
+        <item>@string/sunday</item>
+        <item>@string/monday</item>
+        <item>@string/tuesday</item>
+        <item>@string/wednesday</item>
+        <item>@string/thursday</item>
+        <item>@string/friday</item>
+        <item>@string/saturday</item>
+    </string-array>
+
+    <string-array name="weekDaySmall">
+        <item>@string/su</item>
+        <item>@string/m</item>
+        <item>@string/tu</item>
+        <item>@string/w</item>
+        <item>@string/th</item>
+        <item>@string/f</item>
+        <item>@string/sat</item>
+    </string-array>
 </resources>
