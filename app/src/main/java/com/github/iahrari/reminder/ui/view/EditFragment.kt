@@ -112,7 +112,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
             remindTypes.setOnCheckedChangeListener { _, i ->
                 when (i) {
                     R.id.remind_daily ->
-                        checkDailyType(reminder!!)
+                        checkDailyType()
 
                     R.id.remind_monthly -> {
                         val type = if(reminder!!.type == ReminderType.START_OF_MONTH ||reminder!!.type == ReminderType.END_OF_MONTH)
@@ -138,16 +138,18 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
         }
     }
 
-    private fun checkDailyType(reminder: Reminder){
-        if (reminder.type == ReminderType.DAILY){
+    private fun checkDailyType(){
+        reminder!!.type = ReminderType.DAILY
+        if (reminder!!.type == ReminderType.DAILY || reminder!!.type == ReminderType.ONCE || reminder!!.type == ReminderType.WEEKLY || reminder!!.type == ReminderType.DAYS_OF_WEEK){
             var enabledDays = 0
-            for (d in reminder.weeksDay)
+            for (d in reminder!!.weeksDay)
                 if (d == Reminder.WEEK_DAY_ENABLE)
                     enabledDays++
 
-            reminder.type = when(enabledDays){
+            reminder!!.type = when(enabledDays){
                 0 -> ReminderType.ONCE
                 1 -> ReminderType.WEEKLY
+                7 -> ReminderType.DAILY
                 else -> ReminderType.DAYS_OF_WEEK
             }
         }
@@ -227,6 +229,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
                     if (weeksDay[position] == Reminder.WEEK_DAY_ENABLE)
                         Reminder.WEEK_DAY_DISABLE
                     else Reminder.WEEK_DAY_ENABLE
+                checkDailyType()
 
                 setWeekDayBackgroundColor(weeksDay[position] == Reminder.WEEK_DAY_ENABLE, weekDay)
             }
