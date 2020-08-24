@@ -63,6 +63,8 @@ class ListAdapter(private val listener: OnItemClick):
             listener.onItemsSelected(selectedList)
             reminder.isSelected = selected
             binding.hover.visibility = if(selected) View.VISIBLE else View.GONE
+            binding.hover.isClickable = selected
+            binding.hover.isFocusable = selected
         }
 
         companion object {
