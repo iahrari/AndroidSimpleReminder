@@ -115,7 +115,11 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
                         checkDailyType(reminder!!)
 
                     R.id.remind_monthly -> {
-                        reminder!!.type = ReminderType.START_OF_MONTH
+                        val type = if(reminder!!.type == ReminderType.START_OF_MONTH ||reminder!!.type == ReminderType.END_OF_MONTH)
+                            reminder!!.type
+                            else ReminderType.START_OF_MONTH
+
+                        reminder!!.type = type
                         binding.monthPickerContainer.type = reminder!!.type
                         binding.monthPickerContainer.monthPicker.setOnCheckedChangeListener { _, itemId ->
                             if (itemId == R.id.start_of_month)
