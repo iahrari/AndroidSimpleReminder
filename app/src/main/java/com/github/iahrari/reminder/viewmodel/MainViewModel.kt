@@ -22,7 +22,7 @@ class MainViewModel @ViewModelInject constructor(
         if (id >= 0) {
             viewModelScope.launch(Dispatchers.Default) {
                 reminderOriginal = database.getDAO().getReminderById(id)
-                liveData.postValue(reminderOriginal!!.copy().apply {
+                liveData.postValue(reminderOriginal!!.copy(weeksDay = reminderOriginal!!.weeksDay.copyOf()).apply {
                     this.id = reminderOriginal!!.id
                 })
             }

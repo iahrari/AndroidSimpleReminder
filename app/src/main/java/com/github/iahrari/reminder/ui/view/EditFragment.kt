@@ -112,7 +112,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
             remindTypes.setOnCheckedChangeListener { _, i ->
                 when (i) {
                     R.id.remind_daily ->
-                        reminder!!.type = ReminderType.DAILY
+                        checkDailyType(reminder!!)
 
                     R.id.remind_monthly -> {
                         reminder!!.type = ReminderType.START_OF_MONTH
@@ -130,6 +130,21 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
                 }
 
                 binding.reminder = reminder!!
+            }
+        }
+    }
+
+    private fun checkDailyType(reminder: Reminder){
+        if (reminder.type == ReminderType.DAILY){
+            var enabledDays = 0
+            for (d in reminder.weeksDay)
+                if (d == Reminder.WEEK_DAY_ENABLE)
+                    enabledDays++
+
+            reminder.type = when(enabledDays){
+                0 -> ReminderType.ONCE
+                1 -> ReminderType.WEEKLY
+                else -> ReminderType.DAYS_OF_WEEK
             }
         }
     }
@@ -178,7 +193,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
                     weekTuesday
                 )
                 setWeekDayBackgroundColor(
-                    weeksDay[Calendar.WEDNESDAY] == Reminder.WEEK_DAY_ENABLE,
+                    weeksDay[Calendar.WEDNESDAY -1] == Reminder.WEEK_DAY_ENABLE,
                     weekWednesday
                 )
                 setWeekDayBackgroundColor(
