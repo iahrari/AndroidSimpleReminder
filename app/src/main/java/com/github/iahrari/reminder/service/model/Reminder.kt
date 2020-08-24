@@ -29,6 +29,7 @@ data class Reminder(
 
         other as Reminder
 
+        if (id != other.id) return false
         if (title != other.title) return false
         if (type != other.type) return false
         if (time != other.time) return false
