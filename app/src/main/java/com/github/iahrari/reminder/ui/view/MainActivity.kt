@@ -11,7 +11,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.ActivityMainBinding
+import com.github.iahrari.reminder.service.alarm.AlarmBroadcastReceiver
 import com.github.iahrari.reminder.ui.util.LanguageUtil
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,9 +21,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    var intentId: Int? = null
     var listener: OnBackPressed? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (intent != null)
+            intentId = intent!!.getIntExtra(AlarmBroadcastReceiver.REMINDER_ID, -1)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -61,6 +66,10 @@ class MainActivity : AppCompatActivity() {
             binding.floatingAction.setText(title)
             binding.floatingAction.extend()
         }
+
+        (binding.floatingAction.behavior as? HideBottomViewOnScrollBehavior)?.slideUp(
+            binding.floatingAction
+        )
     }
 
     override fun attachBaseContext(base: Context?) {

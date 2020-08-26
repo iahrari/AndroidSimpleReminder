@@ -53,4 +53,6 @@
     <string name="thursday">پنجشنبه</string>
     <string name="friday">جمعه</string>
     <string name="plural">‌ها</string>
+    <string name="dont_forget">یادت نره</string>
+    <string name="you_missed">یادآور رو ازدست دادی</string>
 </resources>

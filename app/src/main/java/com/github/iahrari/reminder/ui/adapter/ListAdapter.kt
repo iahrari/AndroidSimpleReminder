@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.ReminderItemBinding
 import com.github.iahrari.reminder.service.model.Reminder
+import java.util.*
 
 class ListAdapter(private val listener: OnItemClick):
     androidx.recyclerview.widget.ListAdapter<Reminder, ListAdapter.VHolder> (ReminderDiffUtil()){
@@ -28,8 +29,12 @@ class ListAdapter(private val listener: OnItemClick):
 
         fun bind(data: Reminder){
             binding.hover.visibility = if(data.isSelected) View.VISIBLE else View.GONE
-
             binding.reminder = data
+
+            val minute = data.getCalendar().get(Calendar.MINUTE)
+            val minuteText = if (minute < 10) "0${minute}" else "$minute"
+            val time = "${data.getCalendar().get(Calendar.HOUR)}:$minuteText"
+            binding.time.text = time
 
             binding.root.setOnClickListener {
                 if (selectedList.isEmpty()) listener.onItemClick(data)

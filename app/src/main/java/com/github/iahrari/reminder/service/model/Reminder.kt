@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Entity(tableName = "reminders")
 data class Reminder(

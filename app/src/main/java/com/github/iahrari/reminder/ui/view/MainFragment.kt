@@ -45,6 +45,11 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val id = (requireActivity() as MainActivity).intentId
+        if (id != null && id != -1){
+            (requireActivity() as MainActivity).intentId = null
+            navigateTo(id)
+        }
 
         adapter = ListAdapter(this)
         binding.reminderRecycler.adapter = adapter

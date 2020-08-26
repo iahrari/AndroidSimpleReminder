@@ -53,6 +53,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.i("ReminderEdit", reminderId.toString())
         viewModel.getReminder(reminderId).observe(viewLifecycleOwner) {
             if (it != null) {
                 reminder = it
@@ -73,7 +74,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
         if (item.itemId == R.id.delete)
             setAlertDialog(
                 R.string.delete_question,{
-                    viewModel.deleteReminder(reminder!!)
+                    viewModel.deleteReminders(reminder!!)
                 }, {})
 
         return super.onOptionsItemSelected(item)
@@ -159,9 +160,9 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
     private fun setTimePicker() {
         binding.apply {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-                timePicker.hour = reminder!!.getCalendar().get(Calendar.HOUR)
+                timePicker.hour = reminder!!.getCalendar().get(Calendar.HOUR_OF_DAY)
             else
-                timePicker.currentHour = reminder!!.getCalendar().get(Calendar.HOUR)
+                timePicker.currentHour = reminder!!.getCalendar().get(Calendar.HOUR_OF_DAY)
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
                 timePicker.minute = reminder!!.getCalendar().get(Calendar.MINUTE)

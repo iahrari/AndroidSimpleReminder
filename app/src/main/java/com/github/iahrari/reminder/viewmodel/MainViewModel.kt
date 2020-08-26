@@ -1,15 +1,20 @@
 package com.github.iahrari.reminder.viewmodel
 
+import android.content.Context
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.github.iahrari.reminder.service.alarm.AlarmService
 import com.github.iahrari.reminder.service.database.Database
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class MainViewModel @ViewModelInject constructor(
+    @ApplicationContext private val context: Context,
     private val database: Database
 ) : ViewModel() {
     private var reminderOriginal: Reminder? = null
@@ -37,32 +42,31 @@ class MainViewModel @ViewModelInject constructor(
         return liveData
     }
 
-    fun deleteReminder(reminder: Reminder) {
-        viewModelScope.launch(Dispatchers.Default) {
-            database.getDAO().deleteReminder(reminder)
-        }
-    }
-
     fun deleteReminders(vararg reminders: Reminder) {
         viewModelScope.launch(Dispatchers.Default) {
+            AlarmService.cancelAlarm(context, *reminders)
             database.getDAO().deleteReminders(*reminders)
         }
     }
 
     fun insertOrUpdate(reminder: Reminder, isEnableChanged: Boolean) {
-        if (isReminderUpdated(reminder) || isEnableChanged) {
-            if (!isEnableChanged) reminder.isEnabled = true
-            update(reminder, isEnableChanged)
-        }
+        viewModelScope.launch {
+            if (isReminderUpdated(reminder) || isEnableChanged) {
+                if (!isEnableChanged) reminder.isEnabled = true
+            }
 
-        viewModelScope.launch(Dispatchers.Default) {
-            database.getDAO().insert(reminder)
+            reminder.id = withContext(Dispatchers.Default){
+                database.getDAO().insert(reminder)
+            }.toInt()
+
+            update(reminder, isEnableChanged)
         }
     }
 
     private fun update(reminder: Reminder, isEnableChanged: Boolean){
         if (!isEnableChanged)
             reminderOriginal = reminder
+        AlarmService.setReminder(context, reminder)
 
     }
 
@@ -70,6 +74,8 @@ class MainViewModel @ViewModelInject constructor(
          reminderClone != null && reminderClone != reminderOriginal
 
     private fun getEmptyReminder(): Reminder {
-        return Reminder("", ReminderType.DAILY, Date(), true)
+        return Reminder("", ReminderType.DAILY, Date(), true).apply {
+            getCalendar().set(Calendar.SECOND, 0)
+        }
     }
 }

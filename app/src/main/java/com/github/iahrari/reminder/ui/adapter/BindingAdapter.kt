@@ -35,7 +35,7 @@ object BindingAdapter {
         view.text = HtmlCompat.fromHtml(string, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun getDateText(cal: Calendar, res: Resources): String{
+    fun getDateText(cal: Calendar, res: Resources): String{
         val comma = res.getString(R.string.comma)
         return """${cal.get(Calendar.YEAR)}$comma
                 | ${res.getStringArray(R.array.months)[cal.get(Calendar.MONTH)]}$comma
