@@ -73,7 +73,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.delete)
             setAlertDialog(
-                R.string.delete_question,{
+                R.string.delete_question, {
                     viewModel.deleteReminders(reminder!!)
                 }, {})
 
@@ -116,8 +116,9 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
                         checkDailyType()
 
                     R.id.remind_monthly -> {
-                        val type = if(reminder!!.type == ReminderType.START_OF_MONTH ||reminder!!.type == ReminderType.END_OF_MONTH)
-                            reminder!!.type
+                        val type =
+                            if (reminder!!.type == ReminderType.START_OF_MONTH || reminder!!.type == ReminderType.END_OF_MONTH)
+                                reminder!!.type
                             else ReminderType.START_OF_MONTH
 
                         reminder!!.type = type
@@ -139,15 +140,15 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
         }
     }
 
-    private fun checkDailyType(){
+    private fun checkDailyType() {
         reminder!!.type = ReminderType.DAILY
-        if (reminder!!.type == ReminderType.DAILY || reminder!!.type == ReminderType.ONCE || reminder!!.type == ReminderType.WEEKLY || reminder!!.type == ReminderType.DAYS_OF_WEEK){
+        if (reminder!!.type == ReminderType.DAILY || reminder!!.type == ReminderType.ONCE || reminder!!.type == ReminderType.WEEKLY || reminder!!.type == ReminderType.DAYS_OF_WEEK) {
             var enabledDays = 0
             for (d in reminder!!.weeksDay)
                 if (d == Reminder.WEEK_DAY_ENABLE)
                     enabledDays++
 
-            reminder!!.type = when(enabledDays){
+            reminder!!.type = when (enabledDays) {
                 0 -> ReminderType.ONCE
                 1 -> ReminderType.WEEKLY
                 7 -> ReminderType.DAILY
@@ -182,62 +183,40 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
 
     private fun setWeekDayPicker() {
         binding.weekPicker.apply {
-            reminder!!.apply {
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.SATURDAY - 1] == Reminder.WEEK_DAY_ENABLE,
-                    weekSaturday
-                )
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.SUNDAY - 1] == Reminder.WEEK_DAY_ENABLE,
-                    weekSunday
-                )
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.MONDAY - 1] == Reminder.WEEK_DAY_ENABLE,
-                    weekMonday
-                )
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.TUESDAY - 1] == Reminder.WEEK_DAY_ENABLE,
-                    weekTuesday
-                )
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.WEDNESDAY -1] == Reminder.WEEK_DAY_ENABLE,
-                    weekWednesday
-                )
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.THURSDAY - 1] == Reminder.WEEK_DAY_ENABLE,
-                    weekThursday
-                )
-                setWeekDayBackgroundColor(
-                    weeksDay[Calendar.FRIDAY - 1] == Reminder.WEEK_DAY_ENABLE,
-                    weekFriday
-                )
+            setWeekDayBackgroundColor(Calendar.SATURDAY, weekSaturday)
+            setWeekDayBackgroundColor(Calendar.SUNDAY, weekSunday)
+            setWeekDayBackgroundColor(Calendar.MONDAY, weekMonday)
+            setWeekDayBackgroundColor(Calendar.TUESDAY, weekTuesday)
+            setWeekDayBackgroundColor(Calendar.WEDNESDAY, weekWednesday)
+            setWeekDayBackgroundColor(Calendar.THURSDAY, weekThursday)
+            setWeekDayBackgroundColor(Calendar.FRIDAY, weekFriday)
 
-                setWeekDayClickListener(Calendar.SATURDAY - 1, weekSaturday)
-                setWeekDayClickListener(Calendar.SUNDAY - 1, weekSunday)
-                setWeekDayClickListener(Calendar.MONDAY - 1, weekMonday)
-                setWeekDayClickListener(Calendar.TUESDAY - 1, weekTuesday)
-                setWeekDayClickListener(Calendar.WEDNESDAY - 1, weekWednesday)
-                setWeekDayClickListener(Calendar.THURSDAY - 1, weekThursday)
-                setWeekDayClickListener(Calendar.FRIDAY - 1, weekFriday)
-            }
+            setWeekDayClickListener(Calendar.SATURDAY, weekSaturday)
+            setWeekDayClickListener(Calendar.SUNDAY, weekSunday)
+            setWeekDayClickListener(Calendar.MONDAY, weekMonday)
+            setWeekDayClickListener(Calendar.TUESDAY, weekTuesday)
+            setWeekDayClickListener(Calendar.WEDNESDAY, weekWednesday)
+            setWeekDayClickListener(Calendar.THURSDAY, weekThursday)
+            setWeekDayClickListener(Calendar.FRIDAY, weekFriday)
         }
     }
 
     private fun setWeekDayClickListener(position: Int, weekDay: CircularRevealCardView) {
         reminder!!.apply {
             weekDay.setOnClickListener {
-                weeksDay[position] =
-                    if (weeksDay[position] == Reminder.WEEK_DAY_ENABLE)
+                weeksDay[position - 1] =
+                    if (weeksDay[position - 1] == Reminder.WEEK_DAY_ENABLE)
                         Reminder.WEEK_DAY_DISABLE
                     else Reminder.WEEK_DAY_ENABLE
                 checkDailyType()
 
-                setWeekDayBackgroundColor(weeksDay[position] == Reminder.WEEK_DAY_ENABLE, weekDay)
+                setWeekDayBackgroundColor(position, weekDay)
             }
         }
     }
 
-    private fun setWeekDayBackgroundColor(isEnabled: Boolean, weekDay: CircularRevealCardView) {
+    private fun setWeekDayBackgroundColor(position: Int, weekDay: CircularRevealCardView) {
+        val isEnabled = reminder!!.weeksDay[position - 1] == Reminder.WEEK_DAY_ENABLE
         weekDay.setCardBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
