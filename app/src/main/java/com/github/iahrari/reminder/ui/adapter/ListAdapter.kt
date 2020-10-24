@@ -31,9 +31,13 @@ class ListAdapter(private val listener: OnItemClick):
             binding.hover.visibility = if(data.isSelected) View.VISIBLE else View.GONE
             binding.reminder = data
 
+            val hour = data.getCalendar().get(Calendar.HOUR)
             val minute = data.getCalendar().get(Calendar.MINUTE)
+
+            val hourText = if (hour == 0) "12" else hour.toString()
             val minuteText = if (minute < 10) "0${minute}" else "$minute"
-            val time = "${data.getCalendar().get(Calendar.HOUR)}:$minuteText"
+
+            val time = "$hourText:$minuteText"
             binding.time.text = time
 
             binding.root.setOnClickListener {
