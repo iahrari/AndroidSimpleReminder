@@ -157,14 +157,6 @@ object AlarmService {
             )
         }
 
-    private fun getOldPendingIntent(context: Context, id: Int, reminderId: Int): PendingIntent? =
-        PendingIntent.getService(
-            context,
-            id,
-            getAlarmIntent(context, reminderId),
-            PendingIntent.FLAG_NO_CREATE
-        )
-
     private fun setRepeatingAlarm(
         context: Context,
         time: Long,
