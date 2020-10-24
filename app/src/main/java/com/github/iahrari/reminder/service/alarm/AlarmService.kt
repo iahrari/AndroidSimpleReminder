@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.util.MonthDisplayHelper
 import com.github.iahrari.reminder.service.database.Database
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
@@ -17,7 +16,6 @@ import java.util.*
 object AlarmService {
 
     fun setReminder(context: Context, reminder: Reminder) {
-        cancelAlarm(context, reminder)
         if (reminder.isEnabled)
             when (reminder.type) {
                 ReminderType.DAILY, ReminderType.ONCE ->
@@ -30,6 +28,7 @@ object AlarmService {
                 ReminderType.END_OF_MONTH -> setEndMonthAlarm(context, reminder)
                 ReminderType.EXACT_TIME -> setExactTimeAlarm(context, reminder)
             }
+        else cancelAlarm(context, reminder)
     }
 
     private fun setExactTimeAlarm(context: Context, reminder: Reminder) {
@@ -126,14 +125,14 @@ object AlarmService {
     }
 
     fun cancelAlarm(context: Context, vararg reminders: Reminder) {
+        val alarmManager = getAlarmManager(context)
         for (reminder in reminders) {
-            val alarmManager = getAlarmManager(context)
-            val requestID = reminder.id * 10
+            val requestID = reminder.id
 
             for (i in 0..7) {
-                val pIntent = getOldPendingIntent(context, requestID + i, reminder.id)
-                if (pIntent != null && alarmManager != null)
-                    alarmManager.cancel(pIntent)
+                val pIntent = getPendingIntent(context, requestID, i)
+                pIntent.cancel()
+                alarmManager?.cancel(pIntent)
             }
         }
     }
@@ -142,12 +141,21 @@ object AlarmService {
         context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
 
     private fun getPendingIntent(context: Context, id: Int, dayId: Int): PendingIntent =
-        PendingIntent.getBroadcast(
-            context,
-            id * 10 + dayId,
-            getAlarmIntent(context, id),
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            PendingIntent.getForegroundService(
+                context,
+                id * 10 + dayId,
+                getAlarmIntent(context, id),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        } else {
+            PendingIntent.getService(
+                context,
+                id * 10 + dayId,
+                getAlarmIntent(context, id),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
 
     private fun getOldPendingIntent(context: Context, id: Int, reminderId: Int): PendingIntent? =
         PendingIntent.getService(
@@ -172,20 +180,22 @@ object AlarmService {
     }
 
     private fun setNonRepeatingAlarm(context: Context, time: Long, pendingIntent: PendingIntent) {
-        getAlarmManager(context)!!.setExact(
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getAlarmManager(context)!!.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
+        } else getAlarmManager(context)!!.setExact(
             AlarmManager.RTC_WAKEUP,
             time,
             pendingIntent
         )
     }
 
-    private fun calculateTillEndOfMonth(cal: Calendar): Int {
-        val mHelper = MonthDisplayHelper(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
-        return cal.get(Calendar.DAY_OF_MONTH) - mHelper.numberOfDaysInMonth
-    }
-
     private fun getAlarmIntent(context: Context, id: Int): Intent =
-        Intent(context, AlarmBroadcastReceiver::class.java).apply {
-            putExtra(AlarmBroadcastReceiver.REMINDER_ID, id)
+        Intent(context, ReminderService::class.java).apply {
+            putExtra(ReminderService.REMINDER_ID, id)
+            action = ReminderService.INTENT_ACTION
         }
 }

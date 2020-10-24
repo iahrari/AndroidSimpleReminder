@@ -11,7 +11,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.ActivityMainBinding
-import com.github.iahrari.reminder.service.alarm.AlarmBroadcastReceiver
+import com.github.iahrari.reminder.service.alarm.ReminderService
 import com.github.iahrari.reminder.ui.util.LanguageUtil
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,8 +25,10 @@ class MainActivity : AppCompatActivity() {
     var listener: OnBackPressed? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent != null)
-            intentId = intent!!.getIntExtra(AlarmBroadcastReceiver.REMINDER_ID, -1)
+        if (intent != null){
+            intentId = intent!!.getIntExtra(ReminderService.REMINDER_ID, -1)
+            Log.i("ReminderEditActivity", intentId.toString())
+        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)

@@ -59,7 +59,7 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
                 reminder = it
                 binding.reminder = reminder
                 binding.monthPickerContainer.type = reminder!!.type
-                Log.i("Reminder", reminder.toString())
+                Log.i("ReminderEdit", reminder.toString())
                 setUI()
             }
         }
