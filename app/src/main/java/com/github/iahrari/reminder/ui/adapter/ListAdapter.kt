@@ -3,6 +3,7 @@ package com.github.iahrari.reminder.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,8 +12,8 @@ import com.github.iahrari.reminder.databinding.ReminderItemBinding
 import com.github.iahrari.reminder.service.model.Reminder
 import java.util.*
 
-class ListAdapter(private val listener: OnItemClick):
-    androidx.recyclerview.widget.ListAdapter<Reminder, ListAdapter.VHolder> (ReminderDiffUtil()){
+class ListAdapter(private val listener: OnItemClick) :
+    androidx.recyclerview.widget.ListAdapter<Reminder, ListAdapter.VHolder>(ReminderDiffUtil()) {
     private val selectedList = mutableListOf<Reminder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VHolder =
@@ -25,11 +26,31 @@ class ListAdapter(private val listener: OnItemClick):
         private val binding: ReminderItemBinding,
         private val listener: OnItemClick,
         private val selectedList: MutableList<Reminder>
-    ): RecyclerView.ViewHolder(binding.root){
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(data: Reminder){
-            binding.hover.visibility = if(data.isSelected) View.VISIBLE else View.GONE
+        fun bind(data: Reminder) {
+            binding.hover.visibility = if (data.isSelected) View.VISIBLE else View.GONE
             binding.reminder = data
+
+            ConstraintSet().apply {
+                clone(binding.listConstraint)
+                if (data.title == "")
+                    connect(
+                        binding.time.id,
+                        ConstraintSet.BOTTOM,
+                        binding.listConstraint.id,
+                        ConstraintSet.BOTTOM,
+                        8
+                    )
+                else
+                    connect(
+                        binding.time.id,
+                        ConstraintSet.BOTTOM,
+                        binding.title.id,
+                        ConstraintSet.TOP,
+                        0
+                    )
+            }.applyTo(binding.listConstraint)
 
             val hour = data.getCalendar().get(Calendar.HOUR)
             val minute = data.getCalendar().get(Calendar.MINUTE)
@@ -56,7 +77,7 @@ class ListAdapter(private val listener: OnItemClick):
             }
 
             binding.hover.setOnClickListener {
-                if(data.isSelected){
+                if (data.isSelected) {
                     selectedList.remove(data)
                     itemSelected(data, false)
                 }
@@ -68,16 +89,21 @@ class ListAdapter(private val listener: OnItemClick):
             }
         }
 
-        private fun itemSelected(reminder: Reminder, selected: Boolean){
+        private fun itemSelected(reminder: Reminder, selected: Boolean) {
             listener.onItemsSelected(selectedList)
             reminder.isSelected = selected
-            binding.hover.visibility = if(selected) View.VISIBLE else View.GONE
+            binding.hover.visibility = if (selected) View.VISIBLE else View.GONE
             binding.hover.isClickable = selected
             binding.hover.isFocusable = selected
         }
 
         companion object {
-            fun from(parent: ViewGroup, layout: Int, listener: OnItemClick, selectedList: MutableList<Reminder>): VHolder =
+            fun from(
+                parent: ViewGroup,
+                layout: Int,
+                listener: OnItemClick,
+                selectedList: MutableList<Reminder>
+            ): VHolder =
                 VHolder(
                     DataBindingUtil.inflate(
                         LayoutInflater.from(parent.context),
@@ -91,17 +117,17 @@ class ListAdapter(private val listener: OnItemClick):
         }
     }
 
-    class ReminderDiffUtil: DiffUtil.ItemCallback<Reminder>(){
+    class ReminderDiffUtil : DiffUtil.ItemCallback<Reminder>() {
         override fun areItemsTheSame(oldItem: Reminder, newItem: Reminder): Boolean =
             oldItem.id == newItem.id
 
 
-        override fun areContentsTheSame(oldItem: Reminder, newItem: Reminder): Boolean  =
+        override fun areContentsTheSame(oldItem: Reminder, newItem: Reminder): Boolean =
             oldItem == newItem
 
     }
 
-    interface OnItemClick{
+    interface OnItemClick {
         fun onItemClick(reminder: Reminder)
         fun onSwitchChanged(reminder: Reminder)
         fun onItemsSelected(items: MutableList<Reminder>)
