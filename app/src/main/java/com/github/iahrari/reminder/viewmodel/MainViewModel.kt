@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.github.iahrari.reminder.service.alarm.AlarmService
-import com.github.iahrari.reminder.service.database.Database
+import com.github.iahrari.reminder.service.database.ReminderDAO
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -15,18 +15,18 @@ import java.util.*
 
 class MainViewModel @ViewModelInject constructor(
     @ApplicationContext private val context: Context,
-    private val database: Database
+    private val dao: ReminderDAO
 ) : ViewModel() {
     private var reminderOriginal: Reminder? = null
 
     fun getReminders(): LiveData<List<Reminder>> =
-        database.getDAO().getAllReminders()
+        dao.getAllReminders()
 
     fun getReminder(id: Int): LiveData<Reminder> {
         val liveData = MutableLiveData<Reminder>()
         if (id >= 0) {
             viewModelScope.launch(Dispatchers.Default) {
-                reminderOriginal = database.getDAO().getReminderById(id)
+                reminderOriginal = dao.getReminderById(id)
                 liveData.postValue(reminderOriginal!!.copy(weeksDay = reminderOriginal!!.weeksDay.copyOf()).apply {
                     this.id = reminderOriginal!!.id
                 })
@@ -45,7 +45,7 @@ class MainViewModel @ViewModelInject constructor(
     fun deleteReminders(vararg reminders: Reminder) {
         viewModelScope.launch(Dispatchers.Default) {
             AlarmService.cancelAlarm(context, *reminders)
-            database.getDAO().deleteReminders(*reminders)
+            dao.deleteReminders(*reminders)
         }
     }
 
@@ -56,7 +56,7 @@ class MainViewModel @ViewModelInject constructor(
             }
 
             reminder.id = withContext(Dispatchers.Default){
-                database.getDAO().insert(reminder)
+                dao.insert(reminder)
             }.toInt()
 
             update(reminder, isEnableChanged)

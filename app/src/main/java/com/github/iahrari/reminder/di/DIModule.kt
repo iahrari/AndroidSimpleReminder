@@ -2,6 +2,7 @@ package com.github.iahrari.reminder.di
 
 import android.content.Context
 import com.github.iahrari.reminder.service.database.Database
+import com.github.iahrari.reminder.service.database.ReminderDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +17,7 @@ object DIModule {
 
     @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext context: Context): Database {
-        return Database.getInstance(context)
+    fun provideDatabaseDAO(@ApplicationContext context: Context): ReminderDAO {
+        return Database.getInstance(context).getDAO()
     }
 }

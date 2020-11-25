@@ -12,16 +12,21 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.service.database.Database
+import com.github.iahrari.reminder.service.database.ReminderDAO
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
 import com.github.iahrari.reminder.ui.adapter.BindingAdapter
 import com.github.iahrari.reminder.ui.view.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ReminderService : Service() {
+    @Inject lateinit var dao: ReminderDAO
 
     private fun setForegroundNotification() {
         createNotificationChannel(applicationContext)
@@ -55,7 +60,6 @@ class ReminderService : Service() {
             }
 
             val pendingIntent = PendingIntent.getActivity(applicationContext, 0, i, 0)
-            val dao = Database.getInstance(applicationContext).getDAO()
 
             CoroutineScope(Dispatchers.Main).launch {
                 val dayOfWeek = alarmId % 10
