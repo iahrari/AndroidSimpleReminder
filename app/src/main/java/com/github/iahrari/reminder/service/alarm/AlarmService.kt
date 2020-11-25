@@ -16,6 +16,7 @@ import java.util.*
 object AlarmService {
 
     fun setReminder(context: Context, reminder: Reminder) {
+        cancelAlarm(context, reminder)
         if (reminder.isEnabled)
             when (reminder.type) {
                 ReminderType.DAILY, ReminderType.ONCE ->
@@ -28,12 +29,11 @@ object AlarmService {
                 ReminderType.END_OF_MONTH -> setEndMonthAlarm(context, reminder)
                 ReminderType.EXACT_TIME -> setExactTimeAlarm(context, reminder)
             }
-        else cancelAlarm(context, reminder)
     }
 
     private fun setExactTimeAlarm(context: Context, reminder: Reminder) {
         if (reminder.time.time > System.currentTimeMillis()) {
-            val pIntent = getPendingIntent(context, reminder.id, 0)
+            val pIntent = getPendingIntent(context, reminder.id * 10)
             setNonRepeatingAlarm(context, reminder.time.time, pIntent)
         } else setMissedAlarm(context, reminder)
     }
@@ -42,7 +42,7 @@ object AlarmService {
         CoroutineScope(Dispatchers.Default).launch {
             reminder.isEnabled = false
             Database.getInstance(context).getDAO().insert(reminder)
-            val pIntent = getPendingIntent(context, reminder.id, 0)
+            val pIntent = getPendingIntent(context, reminder.id * 10)
             val cal = Calendar.getInstance().apply {
                 add(Calendar.MINUTE, 5)
                 set(Calendar.SECOND, 0)
@@ -62,7 +62,7 @@ object AlarmService {
         if (cal.time.time < System.currentTimeMillis())
             cal.add(Calendar.MONTH, 1)
 
-        val pIntent = getPendingIntent(context, reminder.id, 0)
+        val pIntent = getPendingIntent(context, reminder.id * 10)
         setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
@@ -81,7 +81,7 @@ object AlarmService {
 
         Log.i("Reminder_Month", cal.time.toString())
 
-        val pIntent = getPendingIntent(context, reminder.id, 0)
+        val pIntent = getPendingIntent(context, reminder.id * 10)
         setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
@@ -95,14 +95,12 @@ object AlarmService {
         if (cal.time.time < System.currentTimeMillis())
             cal.add(Calendar.DAY_OF_YEAR, 1)
 
-        val pIntent = getPendingIntent(context, reminder.id, 0)
+        val pIntent = getPendingIntent(context, reminder.id * 10)
         Log.i("Reminder", cal.time.toString())
-        if (reminder.type == ReminderType.DAILY)
-            setRepeatingAlarm(context, cal.timeInMillis, 1, pIntent)
-        else setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
+        setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
-    private fun setWeeklyAlarm(context: Context, reminder: Reminder, weekDay: Int) {
+    fun setWeeklyAlarm(context: Context, reminder: Reminder, weekDay: Int) {
         val cal = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, reminder.getCalendar().get(Calendar.HOUR_OF_DAY))
             set(Calendar.MINUTE, reminder.getCalendar().get(Calendar.MINUTE))
@@ -113,8 +111,8 @@ object AlarmService {
         if (cal.time.time < System.currentTimeMillis())
             cal.add(Calendar.DAY_OF_YEAR, 7)
 
-        val pIntent = getPendingIntent(context, reminder.id, weekDay)
-        setRepeatingAlarm(context, cal.timeInMillis, 7, pIntent)
+        val pIntent = getPendingIntent(context, reminder.id * 10 + weekDay)
+        setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
     private fun setDayOfWeekAlarm(context: Context, reminder: Reminder) {
@@ -130,7 +128,7 @@ object AlarmService {
             val requestID = reminder.id
 
             for (i in 0..7) {
-                val pIntent = getPendingIntent(context, requestID, i)
+                val pIntent = getPendingIntent(context, requestID * 10 + i)
                 pIntent.cancel()
                 alarmManager?.cancel(pIntent)
             }
@@ -140,36 +138,22 @@ object AlarmService {
     private fun getAlarmManager(context: Context) =
         context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
 
-    private fun getPendingIntent(context: Context, id: Int, dayId: Int): PendingIntent =
+    private fun getPendingIntent(context: Context, id: Int): PendingIntent =
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             PendingIntent.getForegroundService(
                 context,
-                id * 10 + dayId,
+                id,
                 getAlarmIntent(context, id),
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
         } else {
             PendingIntent.getService(
                 context,
-                id * 10 + dayId,
+                id,
                 getAlarmIntent(context, id),
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
-
-    private fun setRepeatingAlarm(
-        context: Context,
-        time: Long,
-        range: Int,
-        pendingIntent: PendingIntent
-    ) {
-        getAlarmManager(context)!!.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            AlarmManager.INTERVAL_DAY * range,
-            pendingIntent
-        )
-    }
 
     private fun setNonRepeatingAlarm(context: Context, time: Long, pendingIntent: PendingIntent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {

@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 
 class ReminderService : Service() {
 
-    private fun setForegroundNotification(){
+    private fun setForegroundNotification() {
         createNotificationChannel(applicationContext)
         serviceNotification(applicationContext)
         val pIntent = PendingIntent.getActivity(
@@ -45,11 +45,12 @@ class ReminderService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         setForegroundNotification()
-        val id = intent!!.getIntExtra(REMINDER_ID, -1)
-        if (id != -1 && intent.action == INTENT_ACTION) {
+        val alarmId = intent!!.getIntExtra(REMINDER_ID, -1)
+        val id = alarmId / 10
+        if (alarmId != -1 && intent.action == INTENT_ACTION) {
             val i = Intent(applicationContext, MainActivity::class.java).apply {
                 putExtra(REMINDER_ID, id)
-                action = "REMINDER_ID$id"
+                action = "REMINDER_ID$alarmId"
                 this.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             }
 
@@ -57,12 +58,12 @@ class ReminderService : Service() {
             val dao = Database.getInstance(applicationContext).getDAO()
 
             CoroutineScope(Dispatchers.Main).launch {
+                val dayOfWeek = alarmId % 10
+
                 val reminder: Reminder =
                     withContext(Dispatchers.Default) {
                         dao.getReminderById(id)
                     }
-                if (reminder.type == ReminderType.END_OF_MONTH || reminder.type == ReminderType.START_OF_MONTH)
-                    AlarmService.setReminder(applicationContext, reminder)
 
                 val title =
                     if (!reminder.isEnabled) applicationContext.getString(R.string.you_missed)
@@ -93,7 +94,15 @@ class ReminderService : Service() {
                     withContext(Dispatchers.Default) {
                         dao.insert(reminder)
                     }
-                }
+                } else if (
+                    reminder.type == ReminderType.END_OF_MONTH ||
+                    reminder.type == ReminderType.START_OF_MONTH ||
+                    reminder.type == ReminderType.DAILY ||
+                    reminder.type == ReminderType.WEEKLY
+                )
+                    AlarmService.setReminder(applicationContext, reminder)
+                else AlarmService.setWeeklyAlarm(applicationContext, reminder, dayOfWeek)
+
                 stopForeground(false)
                 stopSelf()
             }
