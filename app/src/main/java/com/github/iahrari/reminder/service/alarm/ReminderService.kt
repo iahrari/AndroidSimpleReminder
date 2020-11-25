@@ -73,7 +73,7 @@ class ReminderService : Service() {
                     else applicationContext.getString(R.string.do_not_forget)
 
                 val text = if (reminder.title == "")
-                    BindingAdapter.getDateText(reminder.getCalendar(), applicationContext.resources)
+                    BindingAdapter.makeTitle(reminder, applicationContext.resources)
                 else reminder.title
                 val notificationBuilder = NotificationCompat.Builder(
                     applicationContext,

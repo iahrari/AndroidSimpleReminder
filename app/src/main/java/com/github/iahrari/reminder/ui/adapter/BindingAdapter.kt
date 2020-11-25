@@ -35,11 +35,18 @@ object BindingAdapter {
         view.text = HtmlCompat.fromHtml(string, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    fun getDateText(cal: Calendar, res: Resources): String{
+    private fun getDateText(cal: Calendar, res: Resources): String{
         val comma = res.getString(R.string.comma)
         return """${cal.get(Calendar.YEAR)}$comma
                 | ${res.getStringArray(R.array.months)[cal.get(Calendar.MONTH)]}$comma
                 | ${cal.get(Calendar.DAY_OF_MONTH)} """.trimMargin()
+    }
+
+    fun makeTitle(reminder: Reminder, res: Resources): String{
+        val cal = reminder.getCalendar()
+        return if (reminder.type == ReminderType.DAYS_OF_WEEK)
+            "${res.getStringArray(R.array.weekDays)[cal.get(Calendar.DAY_OF_WEEK)]} - ${cal.get(Calendar.HOUR_OF_DAY)}:${cal.get(Calendar.MINUTE)}"
+        else getDateText(cal, res)
     }
 
     private fun getReminderWeekDays(array: IntArray, res: Resources): String{
