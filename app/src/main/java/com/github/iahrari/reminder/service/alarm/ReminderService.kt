@@ -11,7 +11,6 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.github.iahrari.reminder.R
-import com.github.iahrari.reminder.service.database.Database
 import com.github.iahrari.reminder.service.database.ReminderDAO
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
@@ -104,8 +103,8 @@ class ReminderService : Service() {
                     reminder.type == ReminderType.DAILY ||
                     reminder.type == ReminderType.WEEKLY
                 )
-                    AlarmService.setReminder(applicationContext, reminder)
-                else AlarmService.setWeeklyAlarm(applicationContext, reminder, dayOfWeek)
+                    AlarmService.setReminder(applicationContext, reminder, dao)
+                else AlarmService.setWeeklyAlarm(applicationContext, reminder, dayOfWeek, dao)
 
                 stopForeground(false)
                 stopSelf()
@@ -128,10 +127,10 @@ class ReminderService : Service() {
 
             startForeground(100, notification.build())
             CoroutineScope(Dispatchers.Default).launch {
-                val list = Database.getInstance(applicationContext).getDAO().getAllRemindersList()
+                val list = dao.getAllRemindersList()
                 for (r in list) {
                     if (r.isEnabled)
-                        AlarmService.setReminder(applicationContext, r)
+                        AlarmService.setReminder(applicationContext, r, dao)
                 }
                 stopForeground(true)
                 stopSelf()

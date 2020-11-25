@@ -63,10 +63,10 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun update(reminder: Reminder, isEnableChanged: Boolean){
+    private suspend fun update(reminder: Reminder, isEnableChanged: Boolean){
         if (!isEnableChanged)
             reminderOriginal = reminder
-        AlarmService.setReminder(context, reminder)
+        AlarmService.setReminder(context, reminder, dao)
 
     }
 

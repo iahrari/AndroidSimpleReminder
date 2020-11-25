@@ -5,53 +5,49 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.github.iahrari.reminder.service.database.Database
+import com.github.iahrari.reminder.service.database.ReminderDAO
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 
 object AlarmService {
 
-    fun setReminder(context: Context, reminder: Reminder) {
+    suspend fun setReminder(context: Context, reminder: Reminder, dao: ReminderDAO) {
         cancelAlarm(context, reminder)
         if (reminder.isEnabled)
             when (reminder.type) {
                 ReminderType.DAILY, ReminderType.ONCE ->
-                    setOnceOrDailyAlarm(context, reminder)
+                    setOnceOrDailyAlarm(context, reminder, dao)
 
                 ReminderType.WEEKLY, ReminderType.DAYS_OF_WEEK ->
-                    setDayOfWeekAlarm(context, reminder)
+                    setDayOfWeekAlarm(context, reminder, dao)
 
-                ReminderType.START_OF_MONTH -> setStartMonthAlarm(context, reminder)
-                ReminderType.END_OF_MONTH -> setEndMonthAlarm(context, reminder)
-                ReminderType.EXACT_TIME -> setExactTimeAlarm(context, reminder)
+                ReminderType.START_OF_MONTH -> setStartMonthAlarm(context, reminder, dao)
+                ReminderType.END_OF_MONTH -> setEndMonthAlarm(context, reminder, dao)
+                ReminderType.EXACT_TIME -> setExactTimeAlarm(context, reminder, dao)
             }
     }
 
-    private fun setExactTimeAlarm(context: Context, reminder: Reminder) {
+    private suspend fun setExactTimeAlarm(context: Context, reminder: Reminder, dao: ReminderDAO) {
         if (reminder.time.time > System.currentTimeMillis()) {
             val pIntent = getPendingIntent(context, reminder.id * 10)
             setNonRepeatingAlarm(context, reminder.time.time, pIntent)
-        } else setMissedAlarm(context, reminder)
+        } else setMissedAlarm(context, reminder, dao)
     }
 
-    private fun setMissedAlarm(context: Context, reminder: Reminder) {
-        CoroutineScope(Dispatchers.Default).launch {
-            reminder.isEnabled = false
-            Database.getInstance(context).getDAO().insert(reminder)
-            val pIntent = getPendingIntent(context, reminder.id * 10)
-            val cal = Calendar.getInstance().apply {
-                add(Calendar.MINUTE, 5)
-                set(Calendar.SECOND, 0)
-            }
-            setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
+    private suspend fun setMissedAlarm(context: Context, reminder: Reminder, dao: ReminderDAO) {
+        reminder.isEnabled = false
+        dao.insert(reminder)
+        val pIntent = getPendingIntent(context, reminder.id * 10)
+        val cal = Calendar.getInstance().apply {
+            add(Calendar.MINUTE, 5)
+            set(Calendar.SECOND, 0)
         }
+        setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
+
     }
 
-    private fun setStartMonthAlarm(context: Context, reminder: Reminder) {
+    private suspend fun setStartMonthAlarm(context: Context, reminder: Reminder, dao: ReminderDAO) {
         val cal = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 1)
             set(Calendar.HOUR_OF_DAY, reminder.getCalendar().get(Calendar.HOUR_OF_DAY))
@@ -62,11 +58,14 @@ object AlarmService {
         if (cal.time.time < System.currentTimeMillis())
             cal.add(Calendar.MONTH, 1)
 
+        reminder.time = cal.time
+        dao.insert(reminder)
+
         val pIntent = getPendingIntent(context, reminder.id * 10)
         setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
-    private fun setEndMonthAlarm(context: Context, reminder: Reminder) {
+    private suspend fun setEndMonthAlarm(context: Context, reminder: Reminder, dao: ReminderDAO) {
         val cal = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
             set(Calendar.HOUR_OF_DAY, reminder.getCalendar().get(Calendar.HOUR_OF_DAY))
@@ -79,13 +78,14 @@ object AlarmService {
             cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
         }
 
-        Log.i("Reminder_Month", cal.time.toString())
+        reminder.time = cal.time
+        dao.insert(reminder)
 
         val pIntent = getPendingIntent(context, reminder.id * 10)
         setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
-    private fun setOnceOrDailyAlarm(context: Context, reminder: Reminder) {
+    private suspend fun setOnceOrDailyAlarm(context: Context, reminder: Reminder, dao: ReminderDAO) {
         val cal = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, reminder.getCalendar().get(Calendar.HOUR_OF_DAY))
             set(Calendar.MINUTE, reminder.getCalendar().get(Calendar.MINUTE))
@@ -95,12 +95,15 @@ object AlarmService {
         if (cal.time.time < System.currentTimeMillis())
             cal.add(Calendar.DAY_OF_YEAR, 1)
 
+        reminder.time = cal.time
+        dao.insert(reminder)
+
         val pIntent = getPendingIntent(context, reminder.id * 10)
         Log.i("Reminder", cal.time.toString())
         setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
-    fun setWeeklyAlarm(context: Context, reminder: Reminder, weekDay: Int) {
+    suspend fun setWeeklyAlarm(context: Context, reminder: Reminder, weekDay: Int, dao: ReminderDAO) {
         val cal = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, reminder.getCalendar().get(Calendar.HOUR_OF_DAY))
             set(Calendar.MINUTE, reminder.getCalendar().get(Calendar.MINUTE))
@@ -111,14 +114,18 @@ object AlarmService {
         if (cal.time.time < System.currentTimeMillis())
             cal.add(Calendar.DAY_OF_YEAR, 7)
 
+        if (reminder.type == ReminderType.WEEKLY) {
+            reminder.time = cal.time
+            dao.insert(reminder)
+        }
         val pIntent = getPendingIntent(context, reminder.id * 10 + weekDay)
         setNonRepeatingAlarm(context, cal.timeInMillis, pIntent)
     }
 
-    private fun setDayOfWeekAlarm(context: Context, reminder: Reminder) {
+    private suspend fun setDayOfWeekAlarm(context: Context, reminder: Reminder, dao: ReminderDAO) {
         for ((index, value) in reminder.weeksDay.withIndex()) {
             if (value == Reminder.WEEK_DAY_ENABLE)
-                setWeeklyAlarm(context, reminder, index + 1)
+                setWeeklyAlarm(context, reminder, index + 1, dao)
         }
     }
 
