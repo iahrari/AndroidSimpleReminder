@@ -13,19 +13,20 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         tools:background="@color/colorPrimaryBackground"
-        android:layout_margin="8dp">
+        android:layout_marginVertical="4dp"
+        android:layout_marginHorizontal="8dp">
         <TextView
             android:textDirection="ltr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/time"
-            android:layout_marginHorizontal="24dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:textColor="@color/colorText"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             tools:text="9:00"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,7 +61,7 @@
             app:setDateText="@{reminder}"
             android:id="@+id/is_enabled"
             android:checked="@{reminder.enabled}"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
