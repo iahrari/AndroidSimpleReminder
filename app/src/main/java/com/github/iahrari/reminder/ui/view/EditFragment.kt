@@ -88,10 +88,19 @@ class EditFragment : Fragment(), MainActivity.OnBackPressed {
     }
 
     private fun setDatePicker() {
+        val minD = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        if (reminder!!.type == ReminderType.EXACT_TIME && reminder!!.time.time < System.currentTimeMillis())
+            reminder!!.time = reminder!!.getCalendar().apply {
+                set(Calendar.YEAR, minD.get(Calendar.YEAR))
+                set(Calendar.MONTH, minD.get(Calendar.MONTH))
+                set(Calendar.DAY_OF_MONTH, minD.get(Calendar.DAY_OF_MONTH))
+            }.time
+
         binding.datePickerContainer.datePicker.apply {
-            minDate = Calendar.getInstance().apply {
-                add(Calendar.DAY_OF_MONTH, 1)
-            }.time.time
+            minDate = minD.time.time
 
             init(
                 reminder!!.getCalendar().get(Calendar.YEAR),

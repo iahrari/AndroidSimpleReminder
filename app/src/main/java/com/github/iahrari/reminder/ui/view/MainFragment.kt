@@ -13,6 +13,7 @@ import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.FragmentMainBinding
 import com.github.iahrari.reminder.databinding.SettingLayoutBinding
 import com.github.iahrari.reminder.service.model.Reminder
+import com.github.iahrari.reminder.service.model.ReminderType
 import com.github.iahrari.reminder.ui.adapter.ListAdapter
 import com.github.iahrari.reminder.ui.util.LanguageUtil
 import com.github.iahrari.reminder.viewmodel.MainViewModel
@@ -84,7 +85,9 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
     }
 
     override fun onSwitchChanged(reminder: Reminder) {
-        viewModel.insertOrUpdate(reminder, true)
+        if(reminder.type == ReminderType.EXACT_TIME && reminder.isEnabled && reminder.time.time < System.currentTimeMillis())
+            navigateTo(reminder.id)
+        else viewModel.insertOrUpdate(reminder, true)
     }
 
     override fun onItemsSelected(items: MutableList<Reminder>) {
