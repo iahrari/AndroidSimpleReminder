@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -61,6 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     fun setFloatingButtonUi(title: Int, icon: Int){
         lifecycleScope.launch {
+            ((binding.floatingAction.layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior)
+                .slideUp(binding.floatingAction)
             binding.floatingAction.shrink()
             delay(250)
             binding.floatingAction.setIconResource(icon)
@@ -68,10 +71,6 @@ class MainActivity : AppCompatActivity() {
             binding.floatingAction.setText(title)
             binding.floatingAction.extend()
         }
-
-        (binding.floatingAction.behavior as? HideBottomViewOnScrollBehavior)?.slideUp(
-            binding.floatingAction
-        )
     }
 
     override fun attachBaseContext(base: Context?) {
