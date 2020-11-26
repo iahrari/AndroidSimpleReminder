@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="languages">
-        <item>@string/device_default</item>
         <item>English</item>
         <item>فارسی</item>
     </string-array>

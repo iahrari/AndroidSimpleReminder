@@ -33,7 +33,7 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil
             .inflate(inflater, R.layout.fragment_main, container, false)
         settingBinding = DataBindingUtil
@@ -122,7 +122,7 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
 
     private fun callSettings(){
         val sharedPreferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-        var lang = sharedPreferences.getString("language", LanguageUtil.DEFAULT)
+        var lang = LanguageUtil.getLanguage(requireContext())
         var theme = sharedPreferences.getInt("theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
         settingBinding.languageSpinner.adapter = ArrayAdapter(
@@ -147,17 +147,15 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
 
         settingBinding.languageSpinner.setSelection(
             when(lang) {
-                LanguageUtil.DEFAULT -> 0
-                LanguageUtil.EN -> 1
-                else -> 2
+                LanguageUtil.EN -> 0
+                else -> 1
             }
         )
 
         settingBinding.doneButton.setOnClickListener {
             val edit = sharedPreferences.edit()
             lang = when(settingBinding.languageSpinner.selectedItemId){
-                0L -> LanguageUtil.DEFAULT
-                1L -> LanguageUtil.EN
+                0L -> LanguageUtil.EN
                 else -> LanguageUtil.FA
             }
             edit.putString("language", lang)

@@ -1,7 +1,6 @@
 package com.github.iahrari.reminder.ui.view
 
 import android.content.Context
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -74,23 +73,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(base: Context?) {
-        val language = base!!.getSharedPreferences("settings", Context.MODE_PRIVATE)
-            .getString("language", LanguageUtil.DEFAULT)
-
-        Log.i("Language", language!!)
-        if (language == LanguageUtil.DEFAULT)
-            super.attachBaseContext(base)
-        else super.attachBaseContext(LanguageUtil.applyLanguage(base, language))
+        val language = LanguageUtil.getLanguage(base!!)
+        super.attachBaseContext(LanguageUtil.applyLanguage(base, language))
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        LanguageUtil.applyLanguage(this, getLanguage(this))
-    }
 
-    private fun getLanguage(context: Context): String =
-        context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-            .getString("language", LanguageUtil.DEFAULT)!!
 
     interface OnBackPressed{
         fun onBackPressed()
