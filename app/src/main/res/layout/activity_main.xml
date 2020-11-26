@@ -54,7 +54,7 @@
             app:iconTint="#fff"
             app:icon="@drawable/ic_reminder"
             app:layout_anchor="@id/nav_host_fragment"
-            app:layout_anchorGravity="bottom|end"
+            app:layout_anchorGravity="bottom|center"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
