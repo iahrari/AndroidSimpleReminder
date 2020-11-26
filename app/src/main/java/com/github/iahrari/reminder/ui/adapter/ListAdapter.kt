@@ -34,7 +34,7 @@ class ListAdapter(private val listener: OnItemClick) :
 
             ConstraintSet().apply {
                 clone(binding.listConstraint)
-                if (data.title == "")
+                if (data.title.isEmpty())
                     connect(
                         binding.time.id,
                         ConstraintSet.BOTTOM,

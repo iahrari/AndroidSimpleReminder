@@ -6,6 +6,7 @@
         <variable
             name="reminder" type="com.github.iahrari.reminder.service.model.Reminder" />
         <import type="java.util.Calendar"/>
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,6 +48,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
             android:text="@{reminder.title}"
+            android:visibility="@{(reminder.title.isEmpty())? View.GONE : View.VISIBLE}"
             tools:text="Some Title"
             android:singleLine="true"
             android:marqueeRepeatLimit="marquee_forever"
