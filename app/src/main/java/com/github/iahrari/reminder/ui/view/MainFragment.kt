@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.iahrari.reminder.R
 import com.github.iahrari.reminder.databinding.FragmentMainBinding
+import com.github.iahrari.reminder.databinding.InformationLayoutBinding
 import com.github.iahrari.reminder.databinding.SettingLayoutBinding
 import com.github.iahrari.reminder.service.model.Reminder
 import com.github.iahrari.reminder.service.model.ReminderType
@@ -25,21 +26,27 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
     private lateinit var binding: FragmentMainBinding
     private lateinit var adapter: ListAdapter
     private lateinit var settingBinding: SettingLayoutBinding
-    private lateinit var settingDialog: BottomSheetDialog
+    private lateinit var sheetDialog: BottomSheetDialog
+    private lateinit var informationBinding: InformationLayoutBinding
     private val viewModel: MainViewModel by viewModels()
     private var isInSelectedMode = false
+
+    private fun setBindings(inflater: LayoutInflater, container: ViewGroup?){
+        binding = DataBindingUtil
+            .inflate(inflater, R.layout.fragment_main, container, false)
+        settingBinding = DataBindingUtil
+            .inflate(LayoutInflater.from(requireContext()), R.layout.setting_layout, container, false)
+        informationBinding = DataBindingUtil
+            .inflate(LayoutInflater.from(requireContext()), R.layout.information_layout, container, false)
+        sheetDialog = BottomSheetDialog(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil
-            .inflate(inflater, R.layout.fragment_main, container, false)
-        settingBinding = DataBindingUtil
-            .inflate(LayoutInflater.from(requireContext()), R.layout.setting_layout, container, false)
-        settingDialog = BottomSheetDialog(requireContext())
-        settingDialog.setContentView(settingBinding.root)
+        setBindings(inflater, container)
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -77,6 +84,8 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.settings)
             callSettings()
+        else if(item.itemId == R.id.information)
+            callInformation()
         return super.onOptionsItemSelected(item)
     }
 
@@ -118,6 +127,12 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
                 }
             }
         }
+    }
+
+    private fun callInformation(){
+        sheetDialog.setContentView(informationBinding.root)
+        sheetDialog.show()
+
     }
 
     private fun callSettings(){
@@ -170,13 +185,13 @@ class MainFragment : Fragment(), ListAdapter.OnItemClick {
 
             edit.apply()
             AppCompatDelegate.setDefaultNightMode(theme)
-            settingDialog.dismiss()
+            sheetDialog.dismiss()
             requireActivity().finish()
             requireActivity().overridePendingTransition(0,0)
             startActivity(requireActivity().intent)
             requireActivity().overridePendingTransition(0,0)
         }
-        settingDialog.setContentView(settingBinding.root)
-        settingDialog.show()
+        sheetDialog.setContentView(settingBinding.root)
+        sheetDialog.show()
     }
 }

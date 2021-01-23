@@ -57,4 +57,9 @@
 
 
     <string name="channel" translatable="false">reminder channel</string>
+    <string name="information">Information</string>
+    <string name="github_link">Github repo: https://github.com/iahrari/AndroidSimpleReminder</string>
+    <string name="developer">Developer: Iman Ahrari</string>
+    <string name="email">Email: iahrari@pm.me</string>
+    <string name="logo_source">Logo source: https://pngtree.com/so/clock</string>
 </resources>

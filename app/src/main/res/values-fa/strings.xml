@@ -55,4 +55,9 @@
     <string name="plural">‌ها</string>
     <string name="do_not_forget">یادت نره</string>
     <string name="you_missed">یادآور رو ازدست دادی</string>
+    <string name="information">اطلاعات</string>
+    <string name="developer">توسعه‌دهنده: ایمان احراری</string>
+    <string name="github_link">مخزن گیت‌هاب: https://github.com/iahrari/AndroidSimpleReminder</string>
+    <string name="email">ایمیل: iahrari@pm.me</string>
+    <string name="logo_source" translatable="false">منبع لوگو: https://pngtree.com/so/clock</string>
 </resources>

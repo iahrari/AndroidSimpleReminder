@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/information_title"
+                android:text="@string/information"
+                android:gravity="center"
+                android:layout_margin="16dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textColor="@color/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/github_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:autoLink="all"
+                android:text="@string/github_link"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"/>
+
+            <TextView
+                android:id="@+id/developer_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:autoLink="all"
+                android:text="@string/developer"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"/>
+
+            <TextView
+                android:id="@+id/email_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:autoLink="all"
+                android:text="@string/email"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"/>
+
+            <TextView
+                android:id="@+id/logo_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:autoLink="all"
+                android:text="@string/logo_source"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
